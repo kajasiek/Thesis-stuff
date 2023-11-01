@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import os
-
+from scipy.optimize import curve_fit
 
 #Storing all OGLE files in an array
 path_ogle = os.path.expanduser('~/Desktop/thesis/I')
@@ -33,9 +33,15 @@ data = np.array(temp)
 x = data[:,0]
 y = data[:,1]
 yerror = data[:,2]
+sigma = 1/yerror
+coeff = np.polyfit(x, y, deg=10, w=sigma)
+print(coeff)
+model = np.poly1d(coeff)
+fitted_line = model(x)
 
-#plt.errorbar(x, y, yerr=yerror, fmt='x', ms=5)
-plt.scatter(x, y, c='b', s=5, marker='x')
+plt.scatter(x, y, s=5, marker='x', c='black')
+plt.errorbar(x, y, yerr=yerror, ecolor='gray', c='black', ms=5, fmt='x', capsize=2, alpha=0.2)
+plt.scatter(x, fitted_line, c='b')
 plt.xlabel('HJD-245000 (days)')
 plt.ylabel('I (mag)')
 plt.title(f'{testing}')
